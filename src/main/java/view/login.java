@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 package view;
+import javax.swing.JOptionPane;
+import model.conectDb;
+import model.usuarioSearch;
 
 /**
  *
@@ -140,20 +143,45 @@ public class login extends javax.swing.JFrame {
         fieldUsuario.setText("");
     }//GEN-LAST:event_fieldUsuarioMouseClicked
 
-    private void fieldContraseñaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fieldContraseñaMouseClicked
+    private void accederBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accederBttActionPerformed
         // TODO add your handling code here:
-        fieldContraseña.setText("");
-    }//GEN-LAST:event_fieldContraseñaMouseClicked
+        String user = fieldUsuario.getText();
+        char[] passw = fieldContraseña.getPassword();
+        
+        String passwString = new String(passw);
+        
+        if (user.isEmpty() && passw.length == 0) {
+            JOptionPane.showMessageDialog(null, "Por favor, completa ambos campos.");
+            return;
+        } else if (passw.length < 6) {
+            JOptionPane.showMessageDialog(null, "La contraseña debe tener minimo 6 caracteres");
+            return;
+        }
+        
+        if (!passwString.matches("^\\d+$")) {
+            JOptionPane.showMessageDialog(null, "La contraseña solo debe contener números (dígitos del 0 al 9).");
+            return;
+        }
+        
+        usuarioSearch us = new usuarioSearch();
+        boolean loginExitoso = us.accesoUsuario(user, passw);
+        
+        if (loginExitoso) {
+            dashboard dash = new dashboard();
+            dash.setVisible(true);
+
+            this.dispose();
+        }
+    }//GEN-LAST:event_accederBttActionPerformed
 
     private void fieldContraseñaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldContraseñaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_fieldContraseñaActionPerformed
 
-    private void accederBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accederBttActionPerformed
+    private void fieldContraseñaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fieldContraseñaMouseClicked
         // TODO add your handling code here:
-        dashboard dash = new dashboard();
-        dash.setVisible(true);
-    }//GEN-LAST:event_accederBttActionPerformed
+        fieldContraseña.setText("");
+    }//GEN-LAST:event_fieldContraseñaMouseClicked
 
     /**
      * @param args the command line arguments

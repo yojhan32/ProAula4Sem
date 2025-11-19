@@ -9,12 +9,12 @@ package view.panels;
  *
  * @author YOJHAN DAVID
  */
-public class prestamos extends javax.swing.JPanel {
+public class reportes extends javax.swing.JPanel {
 
     /**
      * Creates new form prestamos
      */
-    public prestamos() {
+    public reportes() {
         initComponents();
     }
 

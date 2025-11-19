@@ -5,9 +5,13 @@
  */
 package view;
 
-import view.panels.prestamos;
+import view.panels.reportes;
 import view.panels.librosDispo;
+import view.panels.prestamos;
+import view.panels.historialPrestamos;
 import java.awt.BorderLayout;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -78,7 +82,7 @@ public class dashboard extends javax.swing.JFrame {
         );
         contentLayout.setVerticalGroup(
             contentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 620, Short.MAX_VALUE)
         );
 
         jPanel1.add(content, new org.netbeans.lib.awtextra.AbsoluteConstraints(242, 130, 740, 620));
@@ -97,7 +101,7 @@ public class dashboard extends javax.swing.JFrame {
         bgTitulo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/banner.jpg"))); // NOI18N
         jPanel1.add(bgTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 0, 740, 130));
 
-        menu.setBackground(new java.awt.Color(51, 153, 255));
+        menu.setBackground(new java.awt.Color(153, 204, 255));
         menu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         logo4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -193,6 +197,19 @@ public class dashboard extends javax.swing.JFrame {
     private void reportesBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportesBttActionPerformed
         // TODO add your handling code here:
         
+        reportes report = new reportes();
+        report.setSize(717, 616);
+        report.setLocation(0,0);
+        
+        content.removeAll();
+        content.add(report, BorderLayout.CENTER);
+        content.revalidate();
+        content.repaint();
+    }//GEN-LAST:event_reportesBttActionPerformed
+
+    private void prestamosBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prestamosBttActionPerformed
+        // TODO add your handling code here:
+        
         prestamos prest = new prestamos();
         prest.setSize(717, 616);
         prest.setLocation(0,0);
@@ -201,19 +218,31 @@ public class dashboard extends javax.swing.JFrame {
         content.add(prest, BorderLayout.CENTER);
         content.revalidate();
         content.repaint();
-    }//GEN-LAST:event_reportesBttActionPerformed
-
-    private void prestamosBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prestamosBttActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_prestamosBttActionPerformed
 
     private void historialPrestamosBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_historialPrestamosBttActionPerformed
         // TODO add your handling code here:
+        
+        historialPrestamos historial = new historialPrestamos();
+        historial.setSize(717, 616);
+        historial.setLocation(0,0);
+        
+        content.removeAll();
+        content.add(historial, BorderLayout.CENTER);
+        content.revalidate();
+        content.repaint();
     }//GEN-LAST:event_historialPrestamosBttActionPerformed
 
     /**
      * @param args the command line arguments
      */
+    
+    //Declaramos el metodo para ver la fecha en la dashboard
+    public static String fecha() {
+        Date fecha = new Date();
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/YYYY");
+        return formato.format(fecha);
+    }
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

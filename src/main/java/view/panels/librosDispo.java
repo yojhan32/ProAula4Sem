@@ -4,6 +4,12 @@
  * and open the template in the editor.
  */
 package view.panels;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import model.conectDb;
+import javax.swing.table.DefaultTableModel;
+import static view.dashboard.fecha;
 
 /**
  *
@@ -16,7 +22,48 @@ public class librosDispo extends javax.swing.JPanel {
      */
     public librosDispo() {
         initComponents();
+        
+        //Metodo cargar libros
+        cargarTablaLibros();
+        
+        //Metodo fecha
+        fechaActual.setText(fecha());
     }
+    
+    //Metodo para cargar los libros a la tabla
+    private void cargarTablaLibros() {
+    DefaultTableModel modelo = new DefaultTableModel();
+
+    modelo.addColumn("ID");
+    modelo.addColumn("Título");
+    modelo.addColumn("Autor");
+    modelo.addColumn("Categoría");
+    modelo.addColumn("Año");
+    modelo.addColumn("Estado");
+
+    tablaLibros.setModel(modelo);
+
+    String sql = "SELECT id_libro, titulo, autor, categoria, año_publicacion, estado FROM librosdispo";
+
+    try (Connection cn = new conectDb().conectar();
+         PreparedStatement pst = cn.prepareStatement(sql);
+         ResultSet rs = pst.executeQuery()) {
+
+        while (rs.next()) {
+            modelo.addRow(new Object[]{
+                rs.getInt("id_libro"),
+                rs.getString("titulo"),
+                rs.getString("autor"),
+                rs.getString("categoria"),
+                rs.getInt("año_publicacion"),
+                rs.getString("estado")
+            });
+        }
+
+    } catch (Exception e) {
+        System.out.println("Error al cargar libros: " + e);
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -28,15 +75,54 @@ public class librosDispo extends javax.swing.JPanel {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        banner = new javax.swing.JPanel();
+        fechaActual = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaLibros = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setText("HOLA");
-        add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 180, 190, 110));
+        jLabel1.setFont(new java.awt.Font("Lato Semibold", 0, 14)); // NOI18N
+        jLabel1.setText("Buenos días, estos son los libros que tenemos disponibles el dia de hoy: ");
+        add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 450, 30));
+
+        banner.setBackground(new java.awt.Color(153, 204, 255));
+        banner.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        banner.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        fechaActual.setFont(new java.awt.Font("JetBrains Mono", 0, 18)); // NOI18N
+        fechaActual.setText("DD/MM/YYYY");
+        banner.add(fechaActual, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 150, 50));
+
+        add(banner, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 740, 100));
+
+        tablaLibros.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tablaLibros);
+
+        add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 430, 450));
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pila-de-libros.png"))); // NOI18N
+        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 190, 270, 360));
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel banner;
+    private javax.swing.JLabel fechaActual;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tablaLibros;
     // End of variables declaration//GEN-END:variables
 }
