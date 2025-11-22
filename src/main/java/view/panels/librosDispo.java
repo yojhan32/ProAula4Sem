@@ -7,6 +7,7 @@ package view.panels;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import javax.swing.JOptionPane;
 import model.conectDb;
 import javax.swing.table.DefaultTableModel;
 import static view.dashboard.fecha;
@@ -25,7 +26,6 @@ public class librosDispo extends javax.swing.JPanel {
         
         //Metodo cargar libros
         cargarTablaLibros();
-        
         //Metodo fecha
         fechaActual.setText(fecha());
     }
@@ -80,6 +80,7 @@ public class librosDispo extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaLibros = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
+        actualizarBtt = new javax.swing.JButton();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -114,10 +115,28 @@ public class librosDispo extends javax.swing.JPanel {
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pila-de-libros.png"))); // NOI18N
         add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 190, 270, 360));
+
+        actualizarBtt.setBackground(new java.awt.Color(102, 204, 255));
+        actualizarBtt.setFont(new java.awt.Font("JetBrains Mono", 2, 14)); // NOI18N
+        actualizarBtt.setText("Actualizar tabla");
+        actualizarBtt.setBorder(null);
+        actualizarBtt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actualizarBttActionPerformed(evt);
+            }
+        });
+        add(actualizarBtt, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 560, 210, 40));
     }// </editor-fold>//GEN-END:initComponents
+
+    private void actualizarBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actualizarBttActionPerformed
+        // TODO add your handling code here:
+        cargarTablaLibros();
+        JOptionPane.showMessageDialog(null, "Tabla actualizada con exito!");
+    }//GEN-LAST:event_actualizarBttActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton actualizarBtt;
     private javax.swing.JPanel banner;
     private javax.swing.JLabel fechaActual;
     private javax.swing.JLabel jLabel1;

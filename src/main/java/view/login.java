@@ -167,6 +167,8 @@ public class login extends javax.swing.JFrame {
         boolean loginExitoso = us.accesoUsuario(user, passw);
         
         if (loginExitoso) {
+            model.sesionUsuario.nombreUsuarioActual = user;
+            
             dashboard dash = new dashboard();
             dash.setVisible(true);
 

@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package view.panels;
+import static view.dashboard.fecha;
+
 
 /**
  *
@@ -16,6 +18,8 @@ public class historialPrestamos extends javax.swing.JPanel {
      */
     public historialPrestamos() {
         initComponents();
+        
+        fechaActual.setText(fecha());
     }
 
     /**
@@ -27,19 +31,36 @@ public class historialPrestamos extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        banner = new javax.swing.JPanel();
+        fechaActual = new javax.swing.JLabel();
+
+        banner.setBackground(new java.awt.Color(153, 204, 255));
+        banner.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        banner.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        fechaActual.setFont(new java.awt.Font("JetBrains Mono", 0, 18)); // NOI18N
+        fechaActual.setText("DD/MM/YYYY");
+        banner.add(fechaActual, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 150, 50));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 740, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(banner, javax.swing.GroupLayout.PREFERRED_SIZE, 740, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 620, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(banner, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 520, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel banner;
+    private javax.swing.JLabel fechaActual;
     // End of variables declaration//GEN-END:variables
 }

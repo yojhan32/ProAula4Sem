@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package view.panels;
+import static view.dashboard.fecha;
 
 /**
  *
@@ -16,6 +17,8 @@ public class reportes extends javax.swing.JPanel {
      */
     public reportes() {
         initComponents();
+        
+        fechaActual.setText(fecha());
     }
 
     /**

@@ -4,6 +4,16 @@
  * and open the template in the editor.
  */
 package view.panels;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Date;
+import javax.swing.JOptionPane;
+import static view.dashboard.fecha;
+import model.conectDb;
+import model.libroSearch;
+import model.sesionUsuario;
 
 /**
  *
@@ -16,6 +26,8 @@ public class prestamos extends javax.swing.JPanel {
      */
     public prestamos() {
         initComponents();
+        
+        fechaActual.setText(fecha());
     }
 
     /**
@@ -29,6 +41,13 @@ public class prestamos extends javax.swing.JPanel {
 
         banner = new javax.swing.JPanel();
         fechaActual = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        buscarLibroField = new javax.swing.JTextField();
+        añoLibroField = new javax.swing.JTextField();
+        generarPrestamoBtt = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -41,11 +60,213 @@ public class prestamos extends javax.swing.JPanel {
         banner.add(fechaActual, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 150, 50));
 
         add(banner, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 740, 100));
+
+        jLabel1.setFont(new java.awt.Font("JetBrains Mono", 2, 18)); // NOI18N
+        jLabel1.setText("Nombre del Libro:");
+        add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
+
+        jLabel2.setFont(new java.awt.Font("Lato", 1, 14)); // NOI18N
+        jLabel2.setText("Bienvenido al apartado para generar prestamos con los libros disponibles.");
+        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, -1));
+
+        jLabel3.setFont(new java.awt.Font("Lato", 1, 14)); // NOI18N
+        jLabel3.setText("Por favor, complete los siguientes campos:");
+        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
+        add(buscarLibroField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, 240, 40));
+        add(añoLibroField, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 240, 240, 40));
+
+        generarPrestamoBtt.setFont(new java.awt.Font("JetBrains Mono", 1, 14)); // NOI18N
+        generarPrestamoBtt.setText("Hacer prestamo");
+        generarPrestamoBtt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generarPrestamoBttActionPerformed(evt);
+            }
+        });
+        add(generarPrestamoBtt, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 540, 170, 50));
+
+        jLabel4.setFont(new java.awt.Font("JetBrains Mono", 2, 18)); // NOI18N
+        jLabel4.setText("Año publicación:");
+        add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 200, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
+
+    private void generarPrestamoBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generarPrestamoBttActionPerformed
+// --- OBTENER NOMBRE DE USUARIO AUTOMÁTICAMENTE DE LA SESIÓN ---
+        String nombreUsuario = sesionUsuario.nombreUsuarioActual;
+        // -------------------------------------------------------------
+        
+        String titulo = buscarLibroField.getText().trim();
+        String añoLibro = añoLibroField.getText().trim();
+        int añoPublicacion = 0;
+        
+        // 1. Validar campos vacíos
+        if(titulo.isEmpty() || añoLibro.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                    "Por favor, complete tanto el Título del libro como el Año de publicación.", 
+                    "Campos incompletos", 
+                    JOptionPane.WARNING_MESSAGE);
+            return; 
+        }
+        
+        // 2. Validar formato del año
+        try {
+            añoPublicacion = Integer.parseInt(añoLibro);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+                    "El Año de publicación debe ser un número válido.", 
+                    "Error de Formato", 
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int idUsuario = obtenerIdUsuario(nombreUsuario);
+        
+        if (idUsuario <= 0) {
+            String mensajeError = (nombreUsuario == null || nombreUsuario.isEmpty()) 
+                                ? "Error: No se detectó un usuario logueado. Inicie sesión nuevamente."
+                                : "Error: No se pudo obtener el ID del usuario logueado ('" + nombreUsuario + "').";
+            
+            JOptionPane.showMessageDialog(this, mensajeError, "Error de Usuario/Sesión", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        int idLibro = obtenerIdLibro(titulo, añoPublicacion);
+
+        if (idLibro > 0) {
+            Date fechaActual = new Date(System.currentTimeMillis());
+            boolean prestamoExitoso = registrarNuevoPrestamo(titulo, idUsuario, fechaActual, idLibro); 
+
+            if (prestamoExitoso) {
+                JOptionPane.showMessageDialog(this, 
+                    "Préstamo de '" + titulo + "' generado con éxito por el usuario: " + nombreUsuario + "!", 
+                    "Préstamo Realizado", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                
+                // Limpiar campos después de un préstamo exitoso
+                buscarLibroField.setText("");
+                añoLibroField.setText("");
+            } else {
+                 JOptionPane.showMessageDialog(this, 
+                    "Error al registrar el préstamo. La transacción fue revertida.", 
+                    "Error de Préstamo", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+
+        } else if (idLibro == 0) {
+            JOptionPane.showMessageDialog(this, 
+                    "El libro no fue encontrado o su estado actual NO es 'disponible'.", 
+                    "Búsqueda Fallida", 
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
+    private int obtenerIdUsuario(String nombreUsuario) {
+        if (nombreUsuario == null || nombreUsuario.isEmpty()) {
+            return 0;
+        }
+        String sql = "SELECT id FROM usuarios WHERE nombre_usuario = ?";
+        
+        try (Connection cn = new conectDb().conectar();
+             PreparedStatement pst = cn.prepareStatement(sql)) {
+            
+            pst.setString(1, nombreUsuario);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener ID del usuario: " + e.getMessage());
+        }
+        return 0; 
+    }
+
+
+    private int obtenerIdLibro(String titulo, int año) {
+        // Consulta SQL ajustada para verificar el campo 'estado'
+        String sql = "SELECT id_libro FROM librosdispo WHERE titulo = ? AND año_publicacion = ? AND estado = 'disponible'";
+        
+        try (Connection cn = new conectDb().conectar();
+             PreparedStatement pst = cn.prepareStatement(sql)) {
+            
+            pst.setString(1, titulo);
+            pst.setInt(2, año);
+            
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id_libro");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("No se pudo obtener el ID del libro: " + e.getMessage());
+        }
+        return 0; // Retorna 0 si no se encuentra o no está disponible
+    }
+    
+    private boolean registrarNuevoPrestamo(String tituloLibro, int idUsuario, Date fechaPrestamo, int idLibro) {
+        Connection cn = null;
+        
+        String sqlPrestamo = "INSERT INTO prestamos (titulo, id_usuario, fecha_prestamo) VALUES (?, ?, ?)";
+        String sqlEstado = "UPDATE librosdispo SET estado = 'prestado' WHERE id_libro = ?";
+
+        try {
+            cn = new conectDb().conectar();
+            cn.setAutoCommit(false);
+
+            try (PreparedStatement pstPrestamo = cn.prepareStatement(sqlPrestamo)) {
+                pstPrestamo.setString(1, tituloLibro);
+                pstPrestamo.setInt(2, idUsuario);
+                pstPrestamo.setDate(3, (java.sql.Date) fechaPrestamo); 
+                
+                if (pstPrestamo.executeUpdate() == 0) {
+                    throw new SQLException("Fallo al insertar el registro de préstamo.");
+                }
+            }
+
+            // --- 2. Actualizar el Estado ---
+            try (PreparedStatement pstEstado = cn.prepareStatement(sqlEstado)) {
+                pstEstado.setInt(1, idLibro);
+                
+                if (pstEstado.executeUpdate() == 0) {
+                    throw new SQLException("Fallo al actualizar el estado del libro.");
+                }
+            }
+            
+            cn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            if (cn != null) {
+                try {
+                    cn.rollback();
+                } catch (SQLException ex) {
+                    System.err.println("Error: " + ex.getMessage());
+                }
+            }
+            System.err.println("Error en transacción de préstamo: " + e.getMessage());
+            return false;
+            
+        } finally {
+            if (cn != null) {
+                try {
+                    cn.setAutoCommit(true);
+                    cn.close();
+                } catch (SQLException ex) {
+                    System.err.println("Error al cerrar recursos: " + ex.getMessage());
+                }
+            }
+        }
+
+    }//GEN-LAST:event_generarPrestamoBttActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField añoLibroField;
     private javax.swing.JPanel banner;
+    private javax.swing.JTextField buscarLibroField;
     private javax.swing.JLabel fechaActual;
+    private javax.swing.JButton generarPrestamoBtt;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     // End of variables declaration//GEN-END:variables
 }
