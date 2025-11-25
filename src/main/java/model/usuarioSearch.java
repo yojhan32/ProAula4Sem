@@ -7,46 +7,53 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 public class usuarioSearch {
-
-    public boolean accesoUsuario(String user, char[] passw) {
-        String pass = new String(passw); 
+    
+    public String accesoUsuarioYRol(String user, char[] passw) {
+        String pass = new String(passw);
         
         conectDb db = new conectDb();
-        boolean accesoCorrecto = false;
+        String rolUsuario = null;
+
+        rolUsuario = verificarCredencialesYRol(db, "usuarios", "nombre_usuario", user, pass);
+        java.util.Arrays.fill(passw, '0');
         
-        accesoCorrecto = verificarCredenciales(db, "usuarios", "nombre_usuario", user, pass); 
-        java.util.Arrays.fill(passw, '0'); 
-        
-        if (!accesoCorrecto) {
-            JOptionPane.showMessageDialog(null, 
-                "Usuario no encontrado o credenciales incorrectas", 
-                "Error de autenticación", 
+        if (rolUsuario == null) {
+            JOptionPane.showMessageDialog(null,
+                "Usuario no encontrado o credenciales incorrectas",
+                "Error de autenticación",
                 JOptionPane.WARNING_MESSAGE);
         }
         
-        return accesoCorrecto;
+        return rolUsuario;
     }
 
-    private boolean verificarCredenciales(conectDb db, String tabla, String columnaUsuario, String user, String pass) {
-        String sql = "SELECT 1 FROM " + tabla + " WHERE " + columnaUsuario + " = ? AND contrasena = ?";
+    private String verificarCredencialesYRol(conectDb db, String tabla, String columnaUsuario, String user, String pass) {
+        // Aqui se selecciona la columna "rol"
+        String sql = "SELECT rol FROM " + tabla + " WHERE " + columnaUsuario + " = ? AND contrasena = ?";
         
         try (Connection cn = db.conectar();
              PreparedStatement pst = cn.prepareStatement(sql)) {
-            
+                
             pst.setString(1, user);
             pst.setString(2, pass);
             
             try (ResultSet rs = pst.executeQuery()) {
-                return rs.next(); // Retorna true si encuentra al menos una fila
+                if (rs.next()) {
+                    return rs.getString("rol"); 
+                }
+                return null;
             }
-            
+                
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, 
-                "Error al verificar credenciales en base de datos. Consulta los detalles de la consola.", 
-                "Error de base de datos", 
+            JOptionPane.showMessageDialog(null,
+                "Error al verificar credenciales en base de datos. Consulta los detalles de la consola.",
+                "Error de base de datos",
                 JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
+    
+    // NOTA: El método original public boolean accesoUsuario... ya no se usa, 
+    // pero si lo necesitas, puedes dejarlo o eliminarlo. La nueva lógica está en accesoUsuarioYRol.
 }

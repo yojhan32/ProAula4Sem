@@ -5,7 +5,7 @@
  */
 package view;
 
-import view.panels.reportes;
+import view.panels.gestionLibros;
 import view.panels.librosDispo;
 import view.panels.prestamos;
 import view.panels.historialPrestamos;
@@ -26,6 +26,7 @@ public class dashboard extends javax.swing.JFrame {
      */
     public dashboard() {
         initComponents();
+        aplicarRestricciones();
         
         librosDispo libDispo = new librosDispo();
         libDispo.setSize(717, 616);
@@ -35,6 +36,21 @@ public class dashboard extends javax.swing.JFrame {
         content.add(libDispo, BorderLayout.CENTER);
         content.revalidate();
         content.repaint();
+    }
+    //Esto guarda la variable globalmente
+    public static String rolUsuario;
+    
+    private void aplicarRestricciones() {
+        if (rolUsuario != null && !rolUsuario.equalsIgnoreCase("administrador")) {
+            if (gestionBtt != null) {
+                gestionBtt.setVisible(false);
+            }
+            
+            if (historialPrestamosBtt != null) {
+                historialPrestamosBtt.setVisible(false);
+            }
+            
+        }
     }
 
     /**
@@ -60,8 +76,9 @@ public class dashboard extends javax.swing.JFrame {
         logo1 = new javax.swing.JLabel();
         librosDispoBtt = new javax.swing.JButton();
         prestamosBtt = new javax.swing.JButton();
-        reportesBtt = new javax.swing.JButton();
+        gestionBtt = new javax.swing.JButton();
         historialPrestamosBtt = new javax.swing.JButton();
+        cerrarSesionBtt = new javax.swing.JButton();
 
         jMenu1.setText("jMenu1");
 
@@ -147,17 +164,17 @@ public class dashboard extends javax.swing.JFrame {
         });
         menu.add(prestamosBtt, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 190, 240, 60));
 
-        reportesBtt.setBackground(new java.awt.Color(204, 204, 204));
-        reportesBtt.setFont(new java.awt.Font("Lato Semibold", 0, 14)); // NOI18N
-        reportesBtt.setText("Reportes");
-        reportesBtt.setBorder(null);
-        reportesBtt.setBorderPainted(false);
-        reportesBtt.addActionListener(new java.awt.event.ActionListener() {
+        gestionBtt.setBackground(new java.awt.Color(204, 204, 204));
+        gestionBtt.setFont(new java.awt.Font("Lato Semibold", 0, 14)); // NOI18N
+        gestionBtt.setText("Gestion Libros");
+        gestionBtt.setBorder(null);
+        gestionBtt.setBorderPainted(false);
+        gestionBtt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                reportesBttActionPerformed(evt);
+                gestionBttActionPerformed(evt);
             }
         });
-        menu.add(reportesBtt, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 310, 240, 60));
+        menu.add(gestionBtt, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 310, 240, 60));
 
         historialPrestamosBtt.setBackground(new java.awt.Color(204, 204, 204));
         historialPrestamosBtt.setFont(new java.awt.Font("Lato Semibold", 0, 14)); // NOI18N
@@ -174,6 +191,16 @@ public class dashboard extends javax.swing.JFrame {
         });
         menu.add(historialPrestamosBtt, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 250, 240, 60));
 
+        cerrarSesionBtt.setFont(new java.awt.Font("JetBrains Mono", 1, 14)); // NOI18N
+        cerrarSesionBtt.setText("Cerrar Sesión");
+        cerrarSesionBtt.setBorder(null);
+        cerrarSesionBtt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cerrarSesionBttActionPerformed(evt);
+            }
+        });
+        menu.add(cerrarSesionBtt, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 670, 150, 50));
+
         jPanel1.add(menu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 240, 750));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -181,6 +208,8 @@ public class dashboard extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    
     private void librosDispoBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_librosDispoBttActionPerformed
         // TODO add your handling code here:
         
@@ -194,10 +223,10 @@ public class dashboard extends javax.swing.JFrame {
         content.repaint();
     }//GEN-LAST:event_librosDispoBttActionPerformed
 
-    private void reportesBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportesBttActionPerformed
+    private void gestionBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gestionBttActionPerformed
         // TODO add your handling code here:
         
-        reportes report = new reportes();
+        gestionLibros report = new gestionLibros();
         report.setSize(717, 616);
         report.setLocation(0,0);
         
@@ -205,7 +234,7 @@ public class dashboard extends javax.swing.JFrame {
         content.add(report, BorderLayout.CENTER);
         content.revalidate();
         content.repaint();
-    }//GEN-LAST:event_reportesBttActionPerformed
+    }//GEN-LAST:event_gestionBttActionPerformed
 
     private void prestamosBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prestamosBttActionPerformed
         // TODO add your handling code here:
@@ -232,6 +261,14 @@ public class dashboard extends javax.swing.JFrame {
         content.revalidate();
         content.repaint();
     }//GEN-LAST:event_historialPrestamosBttActionPerformed
+
+    private void cerrarSesionBttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrarSesionBttActionPerformed
+        // TODO add your handling code here:
+       this.dispose();
+       
+       login log = new login();
+       log.setVisible(true);
+    }//GEN-LAST:event_cerrarSesionBttActionPerformed
 
     /**
      * @param args the command line arguments
@@ -292,7 +329,9 @@ public class dashboard extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bgTitulo;
+    private javax.swing.JButton cerrarSesionBtt;
     private javax.swing.JPanel content;
+    private javax.swing.JButton gestionBtt;
     private javax.swing.JButton historialPrestamosBtt;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
@@ -305,7 +344,6 @@ public class dashboard extends javax.swing.JFrame {
     private javax.swing.JLabel logo4;
     private javax.swing.JPanel menu;
     private javax.swing.JButton prestamosBtt;
-    private javax.swing.JButton reportesBtt;
     private javax.swing.JLabel titulo;
     // End of variables declaration//GEN-END:variables
 }

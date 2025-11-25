@@ -4,6 +4,11 @@
  * and open the template in the editor.
  */
 package view.panels;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.table.DefaultTableModel;
+import model.conectDb;
 import static view.dashboard.fecha;
 
 
@@ -18,9 +23,40 @@ public class historialPrestamos extends javax.swing.JPanel {
      */
     public historialPrestamos() {
         initComponents();
+        cargarTablaPrestamos();
         
         fechaActual.setText(fecha());
     }
+    
+        private void cargarTablaPrestamos() {
+    DefaultTableModel modelo = new DefaultTableModel();
+
+    modelo.addColumn("ID Prestamo");
+    modelo.addColumn("Título");
+    modelo.addColumn("ID Usuario");
+    modelo.addColumn("Fecha prestamo");
+
+    prestamos_tb.setModel(modelo);
+
+    String sql = "SELECT id_prestamo, titulo, id_usuario, fecha_prestamo FROM prestamos";
+
+    try (Connection cn = new conectDb().conectar();
+         PreparedStatement pst = cn.prepareStatement(sql);
+         ResultSet rs = pst.executeQuery()) {
+
+        while (rs.next()) {
+            modelo.addRow(new Object[]{
+                rs.getInt("id_prestamo"),
+                rs.getString("titulo"),
+                rs.getInt("id_usuario"),
+                rs.getInt("fecha_prestamo")
+            });
+        }
+
+    } catch (Exception e) {
+        System.out.println("Error al cargar libros: " + e);
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -33,6 +69,12 @@ public class historialPrestamos extends javax.swing.JPanel {
 
         banner = new javax.swing.JPanel();
         fechaActual = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        prestamos_tb = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         banner.setBackground(new java.awt.Color(153, 204, 255));
         banner.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -42,25 +84,38 @@ public class historialPrestamos extends javax.swing.JPanel {
         fechaActual.setText("DD/MM/YYYY");
         banner.add(fechaActual, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 150, 50));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(banner, javax.swing.GroupLayout.PREFERRED_SIZE, 740, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(banner, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 520, Short.MAX_VALUE))
-        );
+        add(banner, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 740, 100));
+
+        jLabel2.setFont(new java.awt.Font("Lato", 1, 14)); // NOI18N
+        jLabel2.setText("Presentamos el historial de los ultimos prestamos realizados:");
+        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, -1));
+
+        prestamos_tb.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(prestamos_tb);
+
+        add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 148, 368, -1));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pedir-prestado.png"))); // NOI18N
+        add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 210, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel banner;
     private javax.swing.JLabel fechaActual;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable prestamos_tb;
     // End of variables declaration//GEN-END:variables
 }

@@ -164,15 +164,18 @@ public class login extends javax.swing.JFrame {
         }
         
         usuarioSearch us = new usuarioSearch();
-        boolean loginExitoso = us.accesoUsuario(user, passw);
         
-        if (loginExitoso) {
-            model.sesionUsuario.nombreUsuarioActual = user;
+        String rolUsuario = us.accesoUsuarioYRol(user, passw);
+        if (rolUsuario != null && !rolUsuario.isEmpty()) {
             
+            model.sesionUsuario.nombreUsuarioActual = user; 
+            view.dashboard.rolUsuario = rolUsuario;
+           
             dashboard dash = new dashboard();
             dash.setVisible(true);
-
+            
             this.dispose();
+            
         }
     }//GEN-LAST:event_accederBttActionPerformed
 
